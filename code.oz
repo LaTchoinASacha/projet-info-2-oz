@@ -27,22 +27,36 @@ local
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
    fun {PartitionToTimedList Partition}
-      fun{IsANote PartitionItem}
+      fun{IsANote PartitionItem} %vérifie si le PartitionItem est une note 
          case PartitionItem of nil then false
-         [] PartitionItem == Note then true else false
+         [] A then
          end
       end
       
-      fun{IsAChord PartitionItem}
+      fun{IsAChord PartitionItem} %vérifie si le PartitionItem est un accord(= à une liste de notes) 
          case PartitionItem of nil then false
-         [] PartitionItem == Chord then true else false
+         [] {IsList PartitionItem}==true then true else false
+         end
+      end
+      
+      fun{IsATransformation PartitionItem} %vérifie si le PartitionItem est une transformation
+         case PartitionItem of nil then false
+         [] {IsRecord PartitionItem}==true then true else false
+         end
+      end
+      
+      fun{ChordToExtended Chord L} %transforme un accord en un accord extended(= à une liste de notes extended)
+         case Chord of nil then {Reverse L}
+         [] H|T and {IsANote H}==true then {ChordToExtended T {NoteToExtended H}|L}
          end
       end
       
       local fun{PartitionToTimedList2 Partition L1 L2} %fonction qui prend en argument une Partition, (liste de Partition item) et qui retourne 2 listes, une contenant les notes (L1) et l'autre contenant les accords (L2) 
-            case Partiton of nil then L1 L2
-            [] H|T and {IsANote H}==true then {PartitionToTimedList2 T L1|H L2}
-            [] H|T and {IsAChord H}==true then {PartitionToTimedList2 T L1 L2|H}
+            case Partition of nil then L1 L2
+            [] H|T and {IsANote H}==true then {PartitionToTimedList2 T L1|{NoteToExtended H} L2}
+            [] H|T and {IsAChord H}==true then {PartitionToTimedList2 T L1 L2|{ChordToExtended H nil}
+            [] H|T and {IsATransformation H}==true then {PartitionToTimedList T L1 L2}
+            [] H|T and {IsANote H}==false and {IsAChord H}==false and {IsATransformation H}==false then {PartitionToTimedList2 T L1 L2}
             end
          end
       in
