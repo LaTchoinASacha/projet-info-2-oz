@@ -49,13 +49,18 @@ local
          end
       end
       
+      %vérifie si c'est une durée
+      fun{IsADuration Duration}
+            case Duration of nil then false
+            [] {IsList Duration} == true then
+         
       %transforme un accord en un accord extended(= à une liste de notes extended)   
       fun{ChordToExtended Chord L} 
          case Chord of nil then {Reverse L}
          [] H|T and {IsANote H}==true then {ChordToExtended T {NoteToExtended H}|L}
          end
       end
-      
+         
        %fonction qui prend en argument une Partition, (liste de Partition item) et qui retourne 2 listes, une contenant les notes (L1) et l'autre contenant les accords (L2)    
       local fun{PartitionToTimedList2 Partition L1 L2}
             case Partition of nil then {Reverse L1} {Reverse L2}
@@ -63,7 +68,7 @@ local
             [] H|T and {IsAChord H}==true then {PartitionToTimedList2 T L1 L2|{ChordToExtended H nil}
             [] H|T and {IsATransformation H}==true then
                   case H of nil then nil %je savais pas quoi mettre dans le premier case mais ça doit pas être nil
-                  [] %faire tout les cas pour les différentes transformations possibles
+                        [] H|T and {IsADuration H}
             [] H|T and {IsANote H}==false and {IsAChord H}==false and {IsATransformation H}==false then {PartitionToTimedList2 T L1 L2}
             end
          end
