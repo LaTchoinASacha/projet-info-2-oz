@@ -1,5 +1,5 @@
 local
-   % See project statement for API details.1
+   % See project statement for API details.2
    [Project] = {Link ['Project2018.ozf']}
    Time = {Link ['x-oz://boot/Time']}.1.getReferenceTime
 
@@ -27,8 +27,25 @@ local
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
    fun {PartitionToTimedList Partition}
-      % TODO
-      nil
+      fun{NoteReturn PartitionItem} %fonction qui prend en argument un Partition item, qui parcours cete liste et qui retourne un objet note 
+         case PartitionItem of nil then nil
+         [] H|T then if H==Note then H else {NoteReturn T} end
+         end
+      end
+      
+      fun{ChordReturn PartitionItem} %fonction qui prend en argument un Partition item, qui parcours cete liste et qui retourne un objet accord 
+         case PartitionItem of nil then nil
+         [] H|T then if H==Chord then H else {ChordReturn T} end
+         end
+      end
+      
+      local fun{PartitionToTimedList2 Partition L1 L2}
+            case Partiton of nil then L1 L2
+            [] H|T then {PartitionToTimedList2 T L1|{NoteReturn H} L2|{ChordReturn H}} %il faut chopper les objets qu'on recherche dans la tête de liste H (note et accord)
+            end
+         end
+      in
+         {PartitionToTimedList2 Partition nil nil}    
    end
 
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
