@@ -27,21 +27,22 @@ local
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
    fun {PartitionToTimedList Partition}
-      fun{NoteReturn PartitionItem} %fonction qui prend en argument un Partition item, qui parcours cete liste et qui retourne un objet note 
-         case PartitionItem of nil then nil
-         [] H|T then if H==Note then H else {NoteReturn T} end
+      fun{IsANote PartitionItem}
+         case PartitionItem of nil then false
+         [] PartitionItem == Note then true else false
          end
       end
       
-      fun{ChordReturn PartitionItem} %fonction qui prend en argument un Partition item, qui parcours cete liste et qui retourne un objet accord 
-         case PartitionItem of nil then nil
-         [] H|T then if H==Chord then H else {ChordReturn T} end
+      fun{IsAChord PartitionItem}
+         case PartitionItem of nil then false
+         [] PartitionItem == Chord then true else false
          end
       end
       
-      local fun{PartitionToTimedList2 Partition L1 L2}
+      local fun{PartitionToTimedList2 Partition L1 L2} %fonction qui prend en argument une Partition, (liste de Partition item) et qui retourne 2 listes, une contenant les notes (L1) et l'autre contenant les accords (L2) 
             case Partiton of nil then L1 L2
-            [] H|T then {PartitionToTimedList2 T L1|{NoteReturn H} L2|{ChordReturn H}} %il faut chopper les objets qu'on recherche dans la tête de liste H (note et accord)
+            [] H|T and {IsANote H}==true then {PartitionToTimedList2 T L1|H L2}
+            [] H|T and {IsAChord H}==true then {PartitionToTimedList2 T L1 L2|H}
             end
          end
       in
