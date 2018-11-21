@@ -61,7 +61,9 @@ local
             case Partition of nil then {Reverse L1} {Reverse L2}
             [] H|T and {IsANote H}==true then {PartitionToTimedList2 T L1|{NoteToExtended H} L2}
             [] H|T and {IsAChord H}==true then {PartitionToTimedList2 T L1 L2|{ChordToExtended H nil}
-            [] H|T and {IsATransformation H}==true then {PartitionToTimedList T L1 L2}
+            [] H|T and {IsATransformation H}==true then
+                  case H of nil then nil %je savais pas quoi matter dans le premier case mais ça doit pas être nil
+                  [] %faire tout les cas pour les différentes transformations possibles
             [] H|T and {IsANote H}==false and {IsAChord H}==false and {IsATransformation H}==false then {PartitionToTimedList2 T L1 L2}
             end
          end
