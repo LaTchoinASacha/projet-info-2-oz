@@ -60,12 +60,26 @@ local
          [] H|T and {IsANote H}==true then {ChordToExtended T {NoteToExtended H}|L}
          end
       end
-         
-       %fonction qui prend en argument une Partition, (liste de Partition item) et qui retourne 2 listes, une contenant les notes (L1) et l'autre contenant les accords (L2)    
-      local fun{PartitionToTimedList2 Partition L1 L2}
-            case Partition of nil then {Reverse L1} {Reverse L2}
-            [] H|T and {IsANote H}==true then {PartitionToTimedList2 T L1|{NoteToExtended H} L2}
-            [] H|T and {IsAChord H}==true then {PartitionToTimedList2 T L1 L2|{ChordToExtended H nil}
+      
+      %calcule le nombre de notes et d'accords d'une partition
+      fun{Count Partition Acc}
+         case Partion of nil then Acc
+         [] H|T then {Count T Acc+1}
+         end
+      end
+               
+               
+      %premiere transformation
+      fun{Duration Time Partition}
+         local N={Count Partition 0} in
+            case Partition of nil then Partition
+            [] H|T then {Duration}
+               
+      %fonction qui prend en argument une Partition, (liste de Partition item) et qui retourne 2 listes, une contenant les notes (L1) et l'autre contenant les accords (L2)    
+      local fun{PartitionToTimedList2 Partition L}
+            case Partition of nil then {Reverse L}
+            [] H|T and {IsANote H}==true then {PartitionToTimedList2 T L|{NoteToExtended H}}
+            [] H|T and {IsAChord H}==true then {PartitionToTimedList2 T L|{ChordToExtended H nil}}
             [] H|T and {IsATransformation H}==true then
                   case H of nil then nil %je savais pas quoi mettre dans le premier case mais ça doit pas être nil
                         [] H|T and {IsADuration H}
@@ -73,7 +87,7 @@ local
             end
          end
       in
-         {PartitionToTimedList2 Partition nil nil}    
+         {PartitionToTimedList2 Partition nil}    
    end
 
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
