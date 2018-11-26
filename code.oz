@@ -57,7 +57,25 @@ local
       end
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Fin des vérifications   
          
-   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%      
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Fonctions des transformations    
+      
+      %change le temps d'une note soit d'un facteur "Factor" ou d'un temps "Time"
+      fun{ChangeDuration Time Factor PartitionItem}
+            if {IsANote PartitionItem}==true and Time >0 then
+               note(name:Name octave:Octave sharp:true duration:Time instrument:none)
+            elseif {IsANote PartitionItem}==true and Factor >0 then
+               note(name:Name octave:Octave sharp:true duration:1*Factor instrument:none)
+            elseif {IsAChord PartitionItem}==true and Time >0 then
+              
+      %premiere transformation
+      fun{Duration Time Partition1 Partition2}
+         local N={Count Partition1 0} in
+            case Partition1 of nil then {Reverse Partition2}
+                     []H|T and {IsANote}==true then {Duration T {ChangeDuration (Time/N) 0 H}|Partition2}
+                     []H|T and {IsAChord}==true then {Duration T {ChangeDuration (Time/N) 0 H}|Partition2}
+          
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Fin des fonctions de transformation
+                        
       %transforme un accord en un accord extended(= à une liste de notes extended)   
       fun{ChordToExtended Chord L} 
          case Chord of nil then {Reverse L}
@@ -71,23 +89,6 @@ local
          [] H|T then {Count T Acc+1}
          end
       end
-      
-      %change le temps d'une note soit d'un facteur "Factor" ou d'un temps "Time"
-      fun{ChangeDuration Time Factor PartitionItem}
-            if {IsANote PartitionItem}==true and Time >0 then
-               note(name:Name octave:Octave sharp:true duration:Time instrument:none)
-            elseif {IsANote PartitionItem}==true and Factor >0 then
-               note(name:Name octave:Octave sharp:true duration:1*Factor instrument:none)
-            elseif {IsAChord PartitionItem}==true and Time >0 then
-               
-         
-         
-      %premiere transformation
-      fun{Duration Time Partition1 Partition2}
-         local N={Count Partition1 0} in
-            case Partition1 of nil then {Reverse Partition2}
-                     []H|T and {IsANote}==true then {Duration T {ChangeDuration (Time/N) 0 H}|Partition2}
-                     []H|T and {IsAChord}==true then {Duration T {ChangeDuration (Time/N) 0 H}|Partition2}       
                
       %fonction qui prend en argument une Partition, (liste de Partition item) et qui retourne 2 listes, une contenant les notes (L1) et l'autre contenant les accords (L2)    
       local fun{PartitionToTimedList2 Partition L}
