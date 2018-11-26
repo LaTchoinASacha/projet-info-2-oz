@@ -38,7 +38,7 @@ local
       %vérifie si le PartitionItem est un accord(= à une liste de notes) 
       fun{IsAChord PartitionItem}
          case PartitionItem of nil then false
-         [] {IsList PartitionItem}==true then true else false %peut être pas mettre de case et juste {IsList PartitionItem}, plus rapide?
+            [] {IsList PartitionItem}==true then true else false
          end
       end
       
@@ -55,19 +55,27 @@ local
       
       %vérifie si le PartitionItem est une note extended ou un accord extended
       fun{IsExtended PartitionItem}
-         case 
+      end 
     
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Fin des vérifications   
+   
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Calcul durée transformations
          
+      fun{TimeDuration Record}
+         local X=Record in
+            X.seconds
+         end
+      end
+         
+      fun{TimeStretch Record}   
+         
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Fin durée transformations      
+   
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Fonctions des transformations    
       
       %change le temps d'une note soit d'un facteur "Factor" ou d'un temps "Time"
       fun{ChangeDuration Time Factor PartitionItem}
-            if {IsANote PartitionItem}==true and Time >0 then
-               note(name:Name octave:Octave sharp:true duration:Time instrument:none)
-            elseif {IsANote PartitionItem}==true and Factor >0 then
-               note(name:Name octave:Octave sharp:true duration:1*Factor instrument:none)
-            elseif {IsAChord PartitionItem}==true and Time >0 then
+      end      
               
       %premiere transformation
       fun{Duration Record}
@@ -75,7 +83,7 @@ local
             Time = X.seconds
             L=X.1
             case L of nil then Record
-                     []H|T 
+            []H|T 
                      
                      
                      
@@ -92,12 +100,14 @@ local
       %calcule la durée totale de la partition
       fun{TotalTime Partition Acc}
          case Partition of nil then Acc
-         []H|T then {TotalTime T Acc+1}
+         []H|T and {IsANote H}==true then {TotalTime T Acc+1}
+         []H|T and {IsAChord H}==true and {IsExtended H}==false then {TotalTime T Acc+1}
+                           
          end
       end
                         
          
-      %fonction qui prend en argument une Partition, (liste de Partition item) et qui retourne 2 listes, une contenant les notes (L1) et l'autre contenant les accords (L2)    
+      %fonction qui prend en argument une Partition, (liste de Partition item) et qui retourne 1 liste, une contenant les notes et les accords extended    
       local fun{PartitionToTimedList2 Partition L}
             case Partition of nil then {Reverse L}
             []H|T and {IsANote H}==true then {PartitionToTimedList2 T L|{NoteToExtended H}}
@@ -112,7 +122,7 @@ local
       in
          {PartitionToTimedList2 Partition nil}    
    end
-
+                            
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
    fun {Mix P2T Music}
