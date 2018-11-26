@@ -8,13 +8,13 @@ local
    % Translate a note to the extended notation.
    fun {NoteToExtended Note}
       case Note
-      of Name#Octave then
+      of Name#Octave then %exemple: a#3
          note(name:Name octave:Octave sharp:true duration:1.0 instrument:none)
-      [] Atom then
+      [] Atom then %exemple: b
          case {AtomToString Atom}
          of [_] then
             note(name:Atom octave:4 sharp:false duration:1.0 instrument:none)
-         [] [N O] then
+         [] [N O] then %exemple: a3
             note(name:{StringToAtom [N]}
                  octave:{StringToInt [O]}
                  sharp:false
@@ -71,8 +71,8 @@ local
       fun{Duration Time Partition1 Partition2}
          local N={Count Partition1 0} in
             case Partition1 of nil then {Reverse Partition2}
-                     []H|T and {IsANote}==true then {Duration T {ChangeDuration (Time/N) 0 H}|Partition2}
-                     []H|T and {IsAChord}==true then {Duration T {ChangeDuration (Time/N) 0 H}|Partition2}
+            []H|T and {IsANote}==true then {Duration T {ChangeDuration (Time/N) 0 H}|Partition2}
+            []H|T and {IsAChord}==true then {Duration T {ChangeDuration (Time/N) 0 H}|Partition2}
           
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Fin des fonctions de transformation
                         
@@ -97,8 +97,10 @@ local
             [] H|T and {IsAChord H}==true then {PartitionToTimedList2 T L|{ChordToExtended H nil}}
             [] H|T and {IsATransformation H}==true then
                   case H of nil then nil %je savais pas quoi mettre dans le premier case mais ça doit pas être nil
-                        [] H|T and {IsADuration H}
-            [] H|T and {IsANote H}==false and {IsAChord H}==false and {IsATransformation H}==false then {PartitionToTimedList2 T L1 L2}
+                  [] H|T and {IsADuration H} == true then
+                  [] H|T and {IsAStretch} == true then
+                  [] H|T and {IsADrone} == true then
+                  [] H|T and {IsTranspose} == true then
             end
          end
       in
