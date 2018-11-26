@@ -45,7 +45,11 @@ local
       %vérifie si le PartitionItem est une transformation   
       fun{IsATransformation PartitionItem} 
          case PartitionItem of nil then false
-         [] {IsRecord PartitionItem}==true then true else false %peut être pas mettre de case et juste {IsRecord PartitionItem}, plus rapide?
+            []duration then true
+            []stretch then true
+            []drone then true
+            []transpose then true
+            else false
          end
       end
       
