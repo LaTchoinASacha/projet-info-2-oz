@@ -45,20 +45,18 @@ local
       %vérifie si le PartitionItem est une transformation   
       fun{IsATransformation PartitionItem} 
          case PartitionItem of nil then false
-            []duration then true
-            []stretch then true
-            []drone then true
-            []transpose then true
+            []{Label PartitionItem}==duration then true
+            []{Label PartitionItem}==stretch then true
+            []{Label PartitionItem}==drone then true
+            []{Label PartitionItem}==transpose then true
             else false
          end
       end
       
-      %vérifie si c'est une durée
-      fun{IsADuration Duration}
-         case Duration of nil then false
-         [] {IsList Duration} == true then true
-         end
-      end
+      %vérifie si le PartitionItem est une note extended ou un accord extended
+      fun{IsExtended PartitionItem}
+         case 
+    
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Fin des vérifications   
          
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Fonctions des transformations    
@@ -72,11 +70,15 @@ local
             elseif {IsAChord PartitionItem}==true and Time >0 then
               
       %premiere transformation
-      fun{Duration Time Partition1 Partition2}
-         local N={Count Partition1 0} in
-            case Partition1 of nil then {Reverse Partition2}
-            []H|T and {IsANote}==true then {Duration T {ChangeDuration (Time/N) 0 H}|Partition2}
-            []H|T and {IsAChord}==true then {Duration T {ChangeDuration (Time/N) 0 H}|Partition2}
+      fun{Duration Record}
+         local X=Record in
+            Time = X.seconds
+            L=X.1
+            case L of nil then Record
+                     []H|T 
+                     
+                     
+                     
           
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Fin des fonctions de transformation
                         
@@ -86,25 +88,25 @@ local
          [] H|T and {IsANote H}==true then {ChordToExtended T {NoteToExtended H}|L}
          end
       end
-      
-      %calcule le nombre de notes et d'accords d'une partition
-      fun{Count Partition Acc}
-         case Partion of nil then Acc
-         [] H|T then {Count T Acc+1}
+                        
+      %calcule la durée totale de la partition
+      fun{TotalTime Partition Acc}
+         case Partition of nil then Acc
+         []H|T then {TotalTime T Acc+1}
          end
       end
-               
+                        
+         
       %fonction qui prend en argument une Partition, (liste de Partition item) et qui retourne 2 listes, une contenant les notes (L1) et l'autre contenant les accords (L2)    
       local fun{PartitionToTimedList2 Partition L}
             case Partition of nil then {Reverse L}
-            [] H|T and {IsANote H}==true then {PartitionToTimedList2 T L|{NoteToExtended H}}
-            [] H|T and {IsAChord H}==true then {PartitionToTimedList2 T L|{ChordToExtended H nil}}
-            [] H|T and {IsATransformation H}==true then
-                  case H of nil then nil %je savais pas quoi mettre dans le premier case mais ça doit pas être nil
-                  [] H|T and {IsADuration H} == true then
-                  [] H|T and {IsAStretch} == true then
-                  [] H|T and {IsADrone} == true then
-                  [] H|T and {IsTranspose} == true then
+            []H|T and {IsANote H}==true then {PartitionToTimedList2 T L|{NoteToExtended H}}
+            []H|T and {IsAChord H}==true then {PartitionToTimedList2 T L|{ChordToExtended H nil}}
+            []H|T and {IsATransformation H}==true then
+               case {Label H}==duration then
+               []{Label H}==stretch then                  
+               []{Label H}==drone then
+               []{Label H}==transpose then
             end
          end
       in
