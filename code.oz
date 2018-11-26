@@ -27,7 +27,7 @@ local
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
    fun {PartitionToTimedList Partition}
-      
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Les vérifications 
       %vérifie si le PartitionItem est une note 
       fun{IsANote PartitionItem} 
          case PartitionItem of nil then false
@@ -55,7 +55,7 @@ local
          [] {IsList Duration} == true then true
          end
       end
-         
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%   
          
       %transforme un accord en un accord extended(= à une liste de notes extended)   
       fun{ChordToExtended Chord L} 
@@ -78,8 +78,6 @@ local
             elseif {IsANote PartitionItem}==true and Factor >0 then
                note(name:Name octave:Octave sharp:true duration:1*Factor instrument:none)
             elseif {IsAChord PartitionItem}==true and Time >0 then
-               
-               %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%CheckPoint
          
          
       %premiere transformation
