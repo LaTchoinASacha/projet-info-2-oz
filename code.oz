@@ -113,10 +113,10 @@ local
       %calcule la durée totale de la partition
       fun{TotalTime Partition Acc}
          case Partition of nil then Acc
-         []H|T and {IsANote H}==true and {IsExtended H}==false then {TotalTime T Acc+1}
-         []H|T and {IsAChord H}==true and {IsExtended H}==false then {TotalTime T Acc+1}
-         []H|T and {IsANote H}==true and {IsExtended H}==true then local X=H in {TotalTime T Acc+X.duration} end
-         []H|T and {IsAChord H}==true and {IsExtended H}==true then local X=H.1 in {TotalTime T Acc+X.duration} end
+	 []H|T and {IsANote H}==true andthen {NoteIsExtended H}==false then {TotalTime T Acc+1}
+	 []H|T and {IsAChord H}==true andthen {ChordIsExtended H}==false then {TotalTime T Acc+1}
+	 []H|T and {IsANote H}==true andthen {NoteIsExtended H}==true then local X=H in {TotalTime T Acc+X.duration} end
+         []H|T and {IsAChord H}==true andthen {ChordIsExtended H}==true then local X=H.1 in {TotalTime T Acc+X.duration} end
          []H|T and {IsATransformation H}==true then
             case{Label H} of duration then {TimeDuration H}
             []stretch then
