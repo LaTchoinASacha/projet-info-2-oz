@@ -6,19 +6,19 @@ local
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
    % Translate a note to the extended notation.
-   fun {NoteToExtended Note Time Factor}
+   fun {NoteToExtended Note}
       case Note
       of Name#Octave then %exemple: a#3
-         note(name:Name octave:Octave sharp:true duration:1.0*Factor instrument:none)
+         note(name:Name octave:Octave sharp:true duration:1.0 instrument:none)
       [] Atom then %exemple: b
          case {AtomToString Atom}
          of [_] then
-            note(name:Atom octave:4 sharp:false duration:1.0*Factor instrument:none)
+            note(name:Atom octave:4 sharp:false duration:1.0 instrument:none)
          [] [N O] then %exemple: a3
             note(name:{StringToAtom [N]}
                  octave:{StringToInt [O]}
                  sharp:false
-                 duration:1.0*Factor
+                 duration:1.0
                  instrument: none)
          else 
             silence(duration:0)
@@ -29,7 +29,7 @@ local
    %transforme un accord en un accord extended(= à une liste de notes extended)   
    fun{ChordToExtended Chord L} 
       case Chord of nil then {Reverse L}
-      []H|T and {IsANote H}==true then {ChordToExtended T {NoteToExtended H 0 1}|L}
+      []H|T and {IsANote H}==true then {ChordToExtended T {NoteToExtended H}|L}
       end
     end
 
@@ -72,21 +72,49 @@ local
 
       fun{ChordIsExtended PartitionItem}
       	case PartitionItem 
-        of H|T andthen {NoteIsExtended H} then true
+        of H|T andthen {NoteIsExtended H}==true then true
         else false   
         end
       end
     
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Fin des vérifications   
    
+			
+   
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Calcul durée transformations
          
       fun{TimeDuration Records}
-         Records.seconds
+         local X=Records in
+            X.seconds
+         end
       end
          
-      fun{TimeStretch Record}   
-         
+      fun{TimeStretch Records}
+      	{TotalTime Records.1 0}*Records.factor
+      end				
+				
+      fun{TimeDrone Records}
+         				
+				
+				
+				
+      fun{TimeExtendedNote Records}
+      	case {Lable Records}
+	of silence then 0
+	[]note then Records.duration
+	end					
+      end
+				
+				
+				
+      fun{TimeExtendedChord L}
+      	case L 
+	of H|T then {TimeExtendedNote H}
+	end
+      end				
+      
+				
+      	
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Fin durée transformations      
    
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Fonctions des transformations    
@@ -111,10 +139,7 @@ local
       fun{Stretch Records}
 					Factor=Records.factor
 					L=Records.1
-					local fun{Stretch2 L}
-								case L of nil then L
-								[]H|T then
-						
+					
           
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Fin des fonctions de transformation
                         
@@ -138,7 +163,7 @@ local
       %fonction qui prend en argument une Partition, (liste de Partition item) et qui retourne 1 liste, une contenant les notes et les accords extended    
       local fun{PartitionToTimedList2 Partition L}
             case Partition of nil then {Reverse L}
-	    []H|T and {IsANote H}==true then {PartitionToTimedList2 T L|{NoteToExtended H 0 1}}
+            []H|T and {IsANote H}==true then {PartitionToTimedList2 T L|{NoteToExtended H}}
             []H|T and {IsAChord H}==true then {PartitionToTimedList2 T L|{ChordToExtended H nil}}
             []H|T and {IsATransformation H}==true then
                case {Label H} of duration then
