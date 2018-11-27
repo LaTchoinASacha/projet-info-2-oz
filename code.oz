@@ -20,6 +20,8 @@ local
                  sharp:false
                  duration:1.0
                  instrument: none)
+         else 
+            silence(duration:0)
          end
       end
    end
@@ -44,11 +46,10 @@ local
       
       %vérifie si le PartitionItem est une transformation   
       fun{IsATransformation PartitionItem} 
-         case PartitionItem of nil then false
-            []{Label PartitionItem}==duration then true
-            []{Label PartitionItem}==stretch then true
-            []{Label PartitionItem}==drone then true
-            []{Label PartitionItem}==transpose then true
+         case {Label PartitionItem} of duration then true
+            []stretch then true
+            []drone then true
+            []transpose then true
             else false
          end
       end
@@ -105,10 +106,10 @@ local
          []H|T and {IsANote H}==true and {IsExtended H}==true then local X=H in {TotalTime T Acc+X.duration} end
          []H|T and {IsAChord H}==true and {IsExtended H}==true then local X=H.1 in {TotalTime T Acc+X.duration} end
          []H|T and {IsATransformation H}==true then
-            case{Label H}==duration then {TimeDuration H}
-            []{Label H}==stretch then
-            []{Label H}==drone then
-            []{Label H}==transpose then                  
+            case{Label H} of duration then {TimeDuration H}
+            []stretch then
+            []drone then
+            []transpose then                  
          end
       end
                         
@@ -119,10 +120,10 @@ local
             []H|T and {IsANote H}==true then {PartitionToTimedList2 T L|{NoteToExtended H}}
             []H|T and {IsAChord H}==true then {PartitionToTimedList2 T L|{ChordToExtended H nil}}
             []H|T and {IsATransformation H}==true then
-               case {Label H}==duration then
-               []{Label H}==stretch then                  
-               []{Label H}==drone then
-               []{Label H}==transpose then
+               case {Label H} of duration then
+               []stretch then                  
+               []drone then
+               []transpose then
             end
          end
       in
