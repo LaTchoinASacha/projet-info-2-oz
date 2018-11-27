@@ -81,10 +81,8 @@ local
    
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Calcul durée transformations
          
-      fun{TimeDuration Record}
-         local X=Record in
-            X.seconds
-         end
+      fun{TimeDuration Records}
+         Records.seconds
       end
          
       fun{TimeStretch Record}   
@@ -113,7 +111,8 @@ local
       fun{Stretch Records}
 					Factor=Records.factor
 					L=Records.1
-					
+					local fun{Stretch2 L}
+						
           
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Fin des fonctions de transformation
                         
