@@ -110,9 +110,9 @@ local
       end               
       
       fun{Stretch Records}
-					Factor=Records.factor
-					L=Records.1
-					
+      	Factor=Records.factor
+	L=Records.1
+	case L of 
           
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Fin des fonctions de transformation
                         
