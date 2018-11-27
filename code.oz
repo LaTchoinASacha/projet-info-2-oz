@@ -62,19 +62,20 @@ local
       end
       
       %vérifie si le PartitionItem est une note extended ou un accord extended
-      fun{IsExtended PartitionItem}
-            
-            case {Label PartitionItem} 
-            of silence and {Arity PartitionItem}.1==duration then true 
-            [] note then true
-            end   
-            case PartitionItem 
-            of H|T and {IsExtended H} then true
-            else false   
-               
-            end   
-      end 
-      end 
+      fun{NoteIsExtended PartitionItem}
+        case {Label PartitionItem} 
+        of silence andthen {Arity PartitionItem}.1==duration then true 
+	[]note then true
+	else false
+	end
+      end
+
+      fun{ChordIsExtended PartitionItem}
+      	case PartitionItem 
+        of H|T andthen {NoteIsExtended H} then true
+        else false   
+        end
+      end
     
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Fin des vérifications   
    
@@ -110,9 +111,9 @@ local
       end               
       
       fun{Stretch Records}
-      	Factor=Records.factor
-	L=Records.1
-	case L of 
+					Factor=Records.factor
+					L=Records.1
+					
           
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Fin des fonctions de transformation
                         
