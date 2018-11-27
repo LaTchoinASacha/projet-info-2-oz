@@ -25,6 +25,13 @@ local
          end
       end
    end
+   
+   %transforme un accord en un accord extended(= à une liste de notes extended)   
+   fun{ChordToExtended Chord L} 
+      case Chord of nil then {Reverse L}
+      []H|T and {IsANote H}==true then {ChordToExtended T {NoteToExtended H}|L}
+      end
+    end
 
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -55,20 +62,19 @@ local
       end
       
       %vérifie si le PartitionItem est une note extended ou un accord extended
-      fun{NoteIsExtended PartitionItem}
+      fun{IsExtended PartitionItem}
+            
             case {Label PartitionItem} 
-            of silence andthen {Arity PartitionItem}.1==duration then true 
-	         []note then true
-	         else false
-	         end
-	   end
-      
-     fun{ChordIsExtended PartitionItem}
+            of silence and {Arity PartitionItem}.1==duration then true 
+            [] note then true
+            end   
             case PartitionItem 
-            of H|T andthen {NoteIsExtended H} then true
+            of H|T and {IsExtended H} then true
             else false   
-            end
-     end   
+               
+            end   
+      end 
+      end 
     
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Fin des vérifications   
    
@@ -91,32 +97,33 @@ local
       end      
               
       %premiere transformation
-      fun{Duration Record}
-         local X=Record in
-            Time = X.seconds
-            L=X.1
-            case L of nil then Record
-            []H|T 
-                     
-                     
-                     
+      fun{Duration Records}
+         Time=Records.seconds
+         L=Records.1
+         local fun{ChangeTimeDuration L Acc}
+            case L of nil then Acc
+	    []H|T then {ChangeTimeDuration T Acc+H.duration}      
+            end
+         end
+         in
+            {ChangeTimeDuration L 0}      
+      end               
+      
+      fun{Stretch Records}
+					Factor=Records.factor
+					L=Records.1
+					
           
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Fin des fonctions de transformation
                         
-      %transforme un accord en un accord extended(= à une liste de notes extended)   
-      fun{ChordToExtended Chord L} 
-         case Chord of nil then {Reverse L}
-         [] H|T and {IsANote H}==true then {ChordToExtended T {NoteToExtended H}|L}
-         end
-      end
                         
       %calcule la durée totale de la partition
       fun{TotalTime Partition Acc}
          case Partition of nil then Acc
-	 []H|T and {IsANote H}==true andthen {NoteIsExtended H}==false then {TotalTime T Acc+1}
-	 []H|T and {IsAChord H}==true andthen {ChordIsExtended H}==false then {TotalTime T Acc+1}
-	 []H|T and {IsANote H}==true andthen {NoteIsExtended H}==true then local X=H in {TotalTime T Acc+X.duration} end
-         []H|T and {IsAChord H}==true andthen {ChordIsExtended H}==true then local X=H.1 in {TotalTime T Acc+X.duration} end
+         []H|T and {IsANote H}==true and {IsExtended H}==false then {TotalTime T Acc+1}
+         []H|T and {IsAChord H}==true and {IsExtended H}==false then {TotalTime T Acc+1}
+         []H|T and {IsANote H}==true and {IsExtended H}==true then local X=H in {TotalTime T Acc+X.duration} end
+         []H|T and {IsAChord H}==true and {IsExtended H}==true then local X=H.1 in {TotalTime T Acc+X.duration} end
          []H|T and {IsATransformation H}==true then
             case{Label H} of duration then {TimeDuration H}
             []stretch then
