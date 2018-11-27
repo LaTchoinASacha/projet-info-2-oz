@@ -56,6 +56,17 @@ local
       
       %vérifie si le PartitionItem est une note extended ou un accord extended
       fun{IsExtended PartitionItem}
+            
+            case {Label PartitionItem} 
+            of silence and {Arity PartitionItem}.1==duration then true 
+            [] note then true
+            end   
+            case PartitionItem 
+            of H|T and {IsExtended H} then true
+            else false   
+               
+            end   
+      end 
       end 
     
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Fin des vérifications   
