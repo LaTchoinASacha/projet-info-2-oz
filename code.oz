@@ -38,18 +38,21 @@ local
    fun {PartitionToTimedList Partition}
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Les vérifications 
       %vérifie si le PartitionItem est une note 
-      fun{IsANote PartitionItem} 
-         case PartitionItem of nil then false
-         [] {IsTuple PartitionItem} or {IsAtom PartitionItem} then true else false
-         end
-      end
+   fun{IsANote PartitionItem} 
+      if {IsAtom PartitionItem}==true then true
+      elseif {IsTuple PartitionItem}==true then true
+      else false  
+      end   
+   end
          
       %vérifie si le PartitionItem est un accord(= à une liste de notes) 
-      fun{IsAChord PartitionItem}
-         case PartitionItem of nil then false
-            [] {IsList PartitionItem}==true then true else false
-         end
+   fun{IsAChord PartitionItem}
+      case PartitionItem
+      of nil then true
+      []H|T andthen {IsANote H} then true
+      else false  
       end
+   end
       
       %vérifie si le PartitionItem est une transformation   
       fun{IsATransformation PartitionItem} 
