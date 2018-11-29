@@ -7,29 +7,32 @@ local
 
    % Translate a note to the extended notation.
    fun {NoteToExtended Note}
-      case Note
-      of Name#Octave then %exemple: a#3
-         note(name:Name octave:Octave sharp:true duration:1.0 instrument:none)
-      [] Atom then %exemple: b
-         case {AtomToString Atom}
-         of [_] then
-            note(name:Atom octave:4 sharp:false duration:1.0 instrument:none)
-         [] [N O] then %exemple: a3
-            note(name:{StringToAtom [N]}
-                 octave:{StringToInt [O]}
-                 sharp:false
-                 duration:1.0
-                 instrument: none)
-         else 
-            silence(duration:0)
-         end
-      end
+      if {NoteIsExtended Note}==true then Note
+      else
+      	case Note
+      	of Name#Octave then %exemple: a#3
+         	note(name:Name octave:Octave sharp:true duration:1.0 instrument:none)
+      	[] Atom then %exemple: b
+         	case {AtomToString Atom}
+         	of [_] then
+            	note(name:Atom octave:4 sharp:false duration:1.0 instrument:none)
+         	[] [N O] then %exemple: a3
+            	note(name:{StringToAtom [N]}
+                 	octave:{StringToInt [O]}
+                 	sharp:false
+                 	duration:1.0
+                 	instrument: none)
+         	else 
+            	silence(duration:0)
+         	end
+      	end
+      end			
    end
    
    %transforme un accord en un accord extended(= à une liste de notes extended)   
-   fun{ChordToExtended Chord L} 
-      case Chord of nil then {Reverse L}
-      []H|T and {IsANote H}==true then {ChordToExtended T {NoteToExtended H}|L}
+   fun{ChordToExtended Chord } 
+      case Chord of nil then Chord 
+      []H|T then {NoteToExtended H}|{ChordToExtended T}
       end
     end
 
@@ -150,7 +153,7 @@ local
       %calcule la durée totale de la partition
       fun{TotalTime Partition Acc}
          case Partition of nil then Acc
-         []H|T and {IsANote H}==true and {IsExtended H}==false then {TotalTime T Acc+1}
+	 []H|T andthen {IsANote H}==true and {IsExtended H}==false then {TotalTime T Acc+1}
          []H|T and {IsAChord H}==true and {IsExtended H}==false then {TotalTime T Acc+1}
          []H|T and {IsANote H}==true and {IsExtended H}==true then local X=H in {TotalTime T Acc+X.duration} end
          []H|T and {IsAChord H}==true and {IsExtended H}==true then local X=H.1 in {TotalTime T Acc+X.duration} end
