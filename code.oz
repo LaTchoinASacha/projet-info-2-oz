@@ -43,8 +43,8 @@ local
       %vérifie si le PartitionItem est une note 
    fun{IsANote PartitionItem} 
       if {IsAtom PartitionItem}==true then true
-      elseif {IsTuple PartitionItem}==true then true
-      else false  
+      elseif {IsList PartitionItem} then false
+      else true
       end   
    end
          
@@ -164,8 +164,31 @@ local
             []transpose then                  
          end
       end
-                        
-         
+      
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% prend une partition quelconque en input et revoie la partition etendue sans les transfo appliquees 				
+     fun{ExtendedPartition Partition}
+         case Partition of nil then Partition
+         []H|T andthen {IsANote H}==true andthen {NoteIsExtended H}==false then {NoteToExtended H}|{ExtendedPartition T}
+         []H|T andthen {IsAChord H}==true andthen {ChordIsExtended H}==false then {ChordToExtended H}|{ExtendedPartition T}
+         []H|T andthen {NoteIsExtended H}==true then H|{ExtendedPartition T}
+         []H|T andthen {ChordIsExtended H}==true then H|{ExtendedPartition T}
+         []H|T andthen {IsATransformation H}==true then
+	    case {Label H} 
+	    of  duration then local X=H.1 in {ExtendedPartition X}|{ExtendedPartition T}end 
+	    [] stretch then local Y=H.1 in {ExtendedPartition Y}|{ExtendedPartition T}end
+	    [] drone then local Z=H.note in {ExtendedPartition Z}|{ExtendedPartition T}end
+	    [] transpose then local S=H.1 in {ExtendedPartition S}|{ExtendedPartition T}end
+	    end
+         end
+end
+
+						
+						
+						
+						
+						
+						
+						
       %fonction qui prend en argument une Partition, (liste de Partition item) et qui retourne 1 liste, une contenant les notes et les accords extended    
       local fun{PartitionToTimedList2 Partition L}
             case Partition of nil then {Reverse L}
