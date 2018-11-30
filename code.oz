@@ -190,21 +190,20 @@ end
 						
 						
       %fonction qui prend en argument une Partition, (liste de Partition item) et qui retourne 1 liste, une contenant les notes et les accords extended    
-      local fun{PartitionToTimedList2 Partition L}
-            case Partition of nil then {Reverse L}
-            []H|T and {IsANote H}==true then {PartitionToTimedList2 T L|{NoteToExtended H}}
-            []H|T and {IsAChord H}==true then {PartitionToTimedList2 T L|{ChordToExtended H nil}}
-            []H|T and {IsATransformation H}==true then
-               case {Label H} of duration then
-               []stretch then                  
-               []drone then
-               []transpose then
-            end
-         end
-      in
-         {PartitionToTimedList2 Partition nil}    
+   fun{PartitionToTImeList Partition}
+   case Parition of nil then Parition
+   []H|T andthen {IsANote H}==true then {Append {NoteToExtended H} {PartitionToTimeList T}}
+   []H|T andthen {IsAChord H}==true then {Append {ChordToExtended H} {PartitionToTimeList T}}
+   []H|T andthen {IsATransformation H}==true then
+      case{Label H} of duration then {Append {Duration H} {PartitionToTimeList T}}
+      []stretch then {Append {Stretch H} {PartitionToTimeList T}}
+      []drone then {Append {Drone H} {PartitionToTimeList T}}
+      []transpose then {Append {Transpose H} {PartitionToTimeList T}}
+      end
+   else
+      {Append H {PartitionToTImeList T}}
    end
-                            
+end
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
    fun {Mix P2T Music}
