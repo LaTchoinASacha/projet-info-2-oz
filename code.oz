@@ -210,7 +210,28 @@ end
       % TODO
       {Project.readFile 'wave/animaux/cow.wav'}
    end
-
+   
+						
+						
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Prend en argument une note et renvoie sa position par rapport a A4
+						
+   fun{Hauteur Note}					
+						
+   end	
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+						
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Calcule la fréquence d'une note grâce à sa hauteur
+    fun{Frequence H}
+	f = 2^(h/12) * 440 Hz	(juste pour se rappeler)					
+	
+							
+    							
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+							
+							
+							
+							
+							
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
    Music = {Project.load 'joy.dj.oz'}
